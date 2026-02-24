@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kanban Board
 
-## Getting Started
+A Kanban-style ToDo list application built with Next.js, Material UI, React Query, and drag-and-drop. Tasks are displayed in four columns (TO DO, IN PROGRESS, IN REVIEW, DONE) with full CRUD, search, and pagination per column.
 
-First, run the development server:
+## Features
+
+- **4 columns**: TO DO (backlog), IN PROGRESS, IN REVIEW, DONE
+- **CRUD**: Create, update, and delete tasks
+- **Drag-and-drop**: Move tasks between columns (via [@dnd-kit](https://dndkit.com/))
+- **Pagination**: "Load more" in each column (configurable page size)
+- **Search**: Filter tasks by title or description
+- **Caching**: Data fetched and cached with [TanStack React Query](https://tanstack.com/query/latest)
+- **UI**: [Material UI (MUI)](https://mui.com/) for layout and components
+
+## Tech Stack
+
+- **Next.js 16** (App Router)
+- **React 19**
+- **TypeScript**
+- **TanStack React Query** – server state and caching
+- **MUI (Material UI)** – components and theme
+- **@dnd-kit** – accessible drag-and-drop
+
+## Setup
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Start the API server (json-server)
+
+The app expects a REST API at `http://localhost:4000`. Using the included `db.json` with [json-server](https://github.com/typicode/json-server):
+
+```bash
+npx json-server --watch db.json --port 4000
+```
+
+Leave this terminal running. Endpoints:
+
+- `GET /tasks` – list all tasks
+- `GET /tasks/:id` – get one task
+- `POST /tasks` – create task (body: `{ "title", "description", "column" }`)
+- `PATCH /tasks/:id` – update task
+- `DELETE /tasks/:id` – delete task
+
+Column values: `todo`, `in-progress`, `in-review`, `done`.
+
+### 3. Start the Next.js app
+
+In a second terminal:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 4. (Optional) Custom API URL
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To use a different API base URL:
 
-## Learn More
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:5000 npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Project structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+├── app/
+│   ├── layout.tsx      # Root layout, MUI + React Query providers
+│   ├── page.tsx        # Home page (Kanban board)
+│   ├── providers.tsx   # QueryClient + ThemeProvider
+│   └── globals.css
+├── components/
+│   ├── KanbanBoard.tsx  # Main board: DnD context, search, columns, modal
+│   ├── KanbanColumn.tsx # Droppable column + task list + Load more / Add task
+│   ├── TaskCard.tsx    # Draggable task card (edit/delete)
+│   └── TaskModal.tsx   # Create/Edit task dialog
+├── lib/
+│   ├── api.ts          # REST client (fetch tasks, create, update, delete)
+│   ├── constants.ts    # Column config, tasks per page
+│   ├── types.ts        # Task, TaskColumn, payload types
+│   └── hooks/
+│       └── use-tasks.ts # React Query hooks (useTasksQuery, mutations)
+├── db.json             # Sample data for json-server
+├── package.json
+└── README.md
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Scripts
 
-## Deploy on Vercel
+| Command        | Description                |
+|----------------|----------------------------|
+| `npm run dev`  | Start Next.js dev server   |
+| `npm run build`| Build for production       |
+| `npm run start`| Run production build       |
+| `npm run lint` | Run ESLint                 |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+If `npm run build` fails with Turbopack/font resolution errors, try running the dev server with `npm run dev` (which often works) or ensure Node and Next.js are up to date.
