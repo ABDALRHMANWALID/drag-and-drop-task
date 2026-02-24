@@ -25,9 +25,9 @@ export function useCreateTaskMutation(
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: api.createTask,
-    onSuccess: (_, __, ctx) => {
+    onSuccess: (data, variables, context, mutationContext) => {
       queryClient.invalidateQueries({ queryKey: TASKS_QUERY_KEY });
-      options?.onSuccess?.(_, __, ctx);
+      options?.onSuccess?.(data, variables, context, mutationContext);
     },
     ...options,
   });
@@ -40,9 +40,9 @@ export function useUpdateTaskMutation(
   return useMutation({
     mutationFn: ({ id, ...payload }: UpdateTaskPayload) =>
       api.updateTask(id, payload),
-    onSuccess: (_, __, ctx) => {
+    onSuccess: (data, variables, context, mutationContext) => {
       queryClient.invalidateQueries({ queryKey: TASKS_QUERY_KEY });
-      options?.onSuccess?.(_, __, ctx);
+      options?.onSuccess?.(data, variables, context, mutationContext);
     },
     ...options,
   });
@@ -54,9 +54,9 @@ export function useDeleteTaskMutation(
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: api.deleteTask,
-    onSuccess: (_, __, ctx) => {
+    onSuccess: (data, variables, context, mutationContext) => {
       queryClient.invalidateQueries({ queryKey: TASKS_QUERY_KEY });
-      options?.onSuccess?.(_, __, ctx);
+      options?.onSuccess?.(data, variables, context, mutationContext);
     },
     ...options,
   });
